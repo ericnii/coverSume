@@ -53,7 +53,8 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
         console.log('Generating cover letter...');
         const formData = req.body;
         const file = req.file;
-        
+        console.log(file);
+        console.log(file.path);
         await generateCov(formData, file.path);
         console.log(file.path);
         await generatePDF('cover');
