@@ -49,6 +49,7 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
         const file = req.file;
         
         await generateCov(formData, file.path);
+        console.log(file.path);
         await generatePDF('cover');
         
         console.log('Sending response...');
