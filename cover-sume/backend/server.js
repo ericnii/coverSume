@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
+const fs = require('fs');
 const multer = require('multer'); 
 
 const uploadsDir = path.join(__dirname, 'uploads');
