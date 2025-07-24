@@ -3,7 +3,16 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const multer = require('multer'); 
-const upload = multer({ dest: 'uploads/' })
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('Created uploads directory at:', uploadsDir);
+} else {
+  console.log('Uploads directory exists at:', uploadsDir);
+}
+const upload = multer({ dest: uploadsDir });
+
 const { generatePDF } = require('./latex');
 const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
