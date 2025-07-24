@@ -58,7 +58,7 @@ const ResumeViewer = () => {
     console.log('Sending data:', dataToSend);
      
     try {
-      const response = await fetch("http://localhost:3001/generate-resume", {
+      const response = await fetch("https://coversume.onrender.com/generate-resume", {
       method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -67,7 +67,7 @@ const ResumeViewer = () => {
       });
 
       const data = await response.json();
-      setPdfUrl(`http://localhost:3001${data.url}`);
+      setPdfUrl(`https://coversume.onrender.com${data.url}`);
     } catch (err) {
       setError('Error, please press Generate Resume again. ');
     }
