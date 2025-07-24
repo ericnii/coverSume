@@ -18,11 +18,11 @@ const { generatePDF } = require('./latex');
 const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
 
-const corsOptions = {
-  origin: 'https://coversume-frontend.onrender.com',  // Only allow this frontend URL
-  optionsSuccessStatus: 200                           // Legacy browsers compatibility
-};
-app.use(cors(corsOptions));  // Apply these CORS settings globally
+app.use(cors({
+  origin: 'https://coversume-frontend.onrender.com',
+  methods: ['GET', 'POST', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'] 
+})); 
 
 // Fix the static file serving path
 app.use(express.static(path.join(__dirname, '..', 'public')));
