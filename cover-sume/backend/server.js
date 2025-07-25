@@ -19,7 +19,8 @@ const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
 
 app.use(cors({
-  origin: 'https://coversume-frontend.onrender.com',
+  origin: ['https://coversume-frontend.onrender.com',
+           'https://coversume-frontend.onrender.com/#/*'],
   methods: ['GET', 'POST', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization'] 
 })); 
