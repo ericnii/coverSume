@@ -186,10 +186,11 @@ function CoverLetterGenerator() {
             </div>
             {/* File upload input */}
             <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Upload Resume (PDF NOT ACCEPTED, please take a screenshot of the resume and attach it here to ensure PNG) (optional)</label>
+              <label className="mb-2 font-bold text-gray-700">Upload Resume (PDF NOT ACCEPTED, please take a screenshot of the resume and attach it here to ensure PNG)</label>
               <input
                 type="file"
                 name="resume"
+                required
                 onChange={e => setResumeFile(e.target.files[0])}
                 className="p-3 border-2 border-gray-300 rounded-md"
               />
