@@ -15,13 +15,6 @@ COPY . .
 # Install backend deps
 RUN cd backend && npm install
 
-# Set permissions
-RUN mkdir -p /cover-sume/backend/uploads && \
-    chown -R node:node /cover-sume && \
-    chmod -R 755 /cover-sume/backend/uploads
-
-USER node
-
 # Start from backend
 WORKDIR /cover-sume/backend
 CMD ["node", "server.js"]
