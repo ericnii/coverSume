@@ -5,7 +5,7 @@ import Cover from './cover.js'
 import Lottie from 'lottie-react';
 import animation from './front.json';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -69,14 +69,14 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<AppContent />} />
         <Route path="/about" element={<About />} />
         <Route path="/resume" element={<Resume />} />
         <Route path="/cover" element={<Cover/>}/>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
