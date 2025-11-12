@@ -18,7 +18,15 @@ const { generatePDF } = require('./latex');
 const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://coversume-frontend.onrender.com',
+           'https://coversume-frontend.onrender.com/#/*'],
+  methods: ['GET', 'POST', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'] 
+})); 
+
+// Fix the static file serving path
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
@@ -46,7 +54,8 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
         console.log('Generating cover letter...');
         const formData = req.body;
         const file = req.file;
-        
+        console.log(file);
+        console.log(file.path);
         await generateCov(formData, file.path);
         console.log(file.path);
         await generatePDF('cover');

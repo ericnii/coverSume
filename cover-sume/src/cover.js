@@ -43,12 +43,12 @@ function CoverLetterGenerator() {
       formDataToSend.append('resume', resumeFile);
     }
     try{   
-      const response = await fetch("http://localhost:3001/cover-letter", {
+      const response = await fetch("https://coversume-backend.onrender.com/cover-letter", {
         method: "POST",
         body: formDataToSend,
       });
       const data = await response.json();
-      setPdfUrl(`http://localhost:3001${data.url}`);
+      setPdfUrl(`https://coversume-backend.onrender.com${data.url}`);
       setLoading(false);
     } catch (err) {
       setError('Error, please press Generate Resume again. ');
@@ -186,10 +186,11 @@ function CoverLetterGenerator() {
             </div>
             {/* File upload input */}
             <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Upload Resume (PDF NOT ACCEPTED, please take a screenshot of the resume and attach it here to ensure PNG) (optional)</label>
+              <label className="mb-2 font-bold text-gray-700">Upload Resume (PDF NOT ACCEPTED, please take a screenshot of the resume and attach it here to ensure PNG)</label>
               <input
                 type="file"
                 name="resume"
+                required
                 onChange={e => setResumeFile(e.target.files[0])}
                 className="p-3 border-2 border-gray-300 rounded-md"
               />
