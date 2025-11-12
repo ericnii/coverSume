@@ -38,7 +38,7 @@ async function generateCov(formData, file) {
           {
             role: "user",
             content: [
-              { type: "text", text: `Please generate a cover letter latex code similar to: ${referenceContent}. 
+              { type: "text", text: `You are a cover letter generator. Please generate a cover letter latex code similar to: ${referenceContent}. 
 
 Here is the user's information: ${userInfo}
 

@@ -19,7 +19,7 @@ const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
 
 app.use(cors({
-  origin: ['https://coversume-frontend.onrender.com',
+  origin: ['http://localhost:3000', 'https://coversume-frontend.onrender.com',
            'https://coversume-frontend.onrender.com/#/*'],
   methods: ['GET', 'POST', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization'] 
@@ -30,10 +30,11 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
-app.post('/generate-resume', upload.single('resume'), async (req, res) => {
+app.post('/generate-resume', async (req, res) => {
     try {
         console.log('Generating resume...');
         const formData = req.body;
+        console.log('Received form data:', formData);
         
         await analyzeImage(formData);
         await generatePDF('resume');

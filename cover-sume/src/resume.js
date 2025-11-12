@@ -66,10 +66,16 @@ const ResumeViewer = () => {
         body: JSON.stringify(dataToSend)
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error', message: `Server error: ${response.status}` }));
+        throw new Error(errorData.message || errorData.error || `Server error: ${response.status}`);
+      }
+
       const data = await response.json();
       setPdfUrl(`https://coversume-backend.onrender.com${data.url}`);
     } catch (err) {
-      setError('Error, please press Generate Resume again. ');
+      console.error('Error generating resume:', err);
+      setError(err.message || 'Error, please press Generate Resume again.');
     }
     setLoading(false);
   }
