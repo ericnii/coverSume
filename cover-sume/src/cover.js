@@ -43,12 +43,12 @@ function CoverLetterGenerator() {
       formDataToSend.append('resume', resumeFile);
     }
     try{   
-      const response = await fetch("https://coversume.onrender.com/cover-letter", {
+      const response = await fetch("http://localhost:3001/cover-letter", {
         method: "POST",
         body: formDataToSend,
       });
       const data = await response.json();
-      setPdfUrl(`https://coversume.onrender.com${data.url}`);
+      setPdfUrl(`http://localhost:3001${data.url}`);
       setLoading(false);
     } catch (err) {
       setError('Error, please press Generate Resume again. ');

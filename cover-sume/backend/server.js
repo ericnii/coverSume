@@ -19,8 +19,6 @@ const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
 
 app.use(cors());
-// Fix the static file serving path
-app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
