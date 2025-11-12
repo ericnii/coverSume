@@ -27,7 +27,7 @@ async function generateCov(formData, file) {
     GitHub: ${formData.github || 'Not provided'}
     Company Name: ${formData.companyName || 'Not provided'}
     Company Address: ${formData.companyAddress || 'Not provided'}
-    Job Position: ${formData.jobPosition || 'Not provided'}
+    Job Posting: ${formData.jobPosting || 'Not provided'}
     Hiring Manager: ${formData.hiringManager || 'Hiring Manager'}`;
 
     console.log(userInfo);
@@ -38,7 +38,13 @@ async function generateCov(formData, file) {
           {
             role: "user",
             content: [
-              { type: "text", text: `Please generate a cover letter latex code similar to: ${referenceContent}. On top of that, here is the user's inputted form info: ${userInfo}. DO NOT add any text at the start or end. ONLY VALID LATEX CODE. DO NOT add \`\`\`latex at the start and \`\`\ at the end. Many parts in the reference latex files have {} where you must replace it. Please replace the filler text with something meaningful and relavant to the cover letter. If the hiring manager's name is not known, then don't include it the first time in bold, only after Dear.` },
+              { type: "text", text: `Please generate a cover letter latex code similar to: ${referenceContent}. 
+
+Here is the user's information: ${userInfo}
+
+IMPORTANT: The user has provided the full job posting above. Use this job posting to tailor the cover letter content. Highlight relevant skills, experiences, and qualifications from the resume that match the job requirements mentioned in the job posting. Make the cover letter specific to this position by referencing key requirements, responsibilities, or qualifications from the job posting.
+
+DO NOT add any text at the start or end. ONLY VALID LATEX CODE. DO NOT add \`\`\`latex at the start and \`\`\ at the end. Many parts in the reference latex files have {} where you must replace it. Please replace the filler text with something meaningful and relevant to the cover letter. If the hiring manager's name is not known, then don't include it the first time in bold, only after Dear.` },
               {
                 type: "image_url",
                 image_url: {
@@ -46,9 +52,9 @@ async function generateCov(formData, file) {
                 },
               },
             ],
-            temperature: 0,
           },
         ],
+        temperature: 0.1,
     });
 
     let latexContent = response.choices[0].message.content;

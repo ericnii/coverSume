@@ -17,7 +17,7 @@ function CoverLetterGenerator() {
     github: '',
     companyName: '',
     companyAddress: '',
-    jobPosition: '',
+    jobPosting: '',
     hiringManager: '',
   });
 
@@ -174,13 +174,13 @@ function CoverLetterGenerator() {
               />
             </div>
             <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Job position</label>
-              <input
-                name="jobPosition"
-                placeholder="Enter the job position"
-                className="p-3 border-2 border-gray-300 rounded-md"
+              <label className="mb-2 font-bold text-gray-700">Job Posting</label>
+              <textarea
+                name="jobPosting"
+                placeholder="Paste the full job posting/description here..."
+                className="p-3 border-2 border-gray-300 rounded-md min-h-[150px]"
                 required
-                value={formData.jobPosition}
+                value={formData.jobPosting}
                 onChange={handleChange}
               />
             </div>
