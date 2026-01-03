@@ -42,9 +42,15 @@ async function generateCov(formData, file) {
 
 Here is the user's information: ${userInfo}
 
-IMPORTANT: The user has provided the full job posting above. Use this job posting to tailor the cover letter content. Highlight relevant skills, experiences, and qualifications from the resume that match the job requirements mentioned in the job posting. Make the cover letter specific to this position by referencing key requirements, responsibilities, or qualifications from the job posting.
-
-DO NOT add any text at the start or end. ONLY VALID LATEX CODE. DO NOT add \`\`\`latex at the start and \`\`\ at the end. Many parts in the reference latex files have {} where you must replace it. Please replace the filler text with something meaningful and relevant to the cover letter. If the hiring manager's name is not known, then don't include it the first time in bold, only after Dear.` },
+IMPORTANT: 
+1. The user has provided the full job posting above. USE TODAY'S DATE AS THE DATE.
+2. Use this job posting to tailor the cover letter content. Highlight relevant skills and qualifications.
+3. CRITICAL - Any special LaTeX characters like #, &, %, $, _, ^, ~ MUST be escaped with a backslash (e.g., \\#, \\&, \\%, \\$, \\_, \\^, \\~)
+4. DO NOT add any text at the start or end. ONLY VALID LATEX CODE.
+5. DO NOT add \`\`\`latex or code fences.
+6. Many parts in the reference latex files have {} - replace with meaningful content.
+7. If the hiring manager's name is not known, don't include it the first time in bold.
+8. DO NOT INCLUDE PAGE NUMBERS` },
               {
                 type: "image_url",
                 image_url: {
@@ -58,6 +64,17 @@ DO NOT add any text at the start or end. ONLY VALID LATEX CODE. DO NOT add \`\`\
     });
 
     let latexContent = response.choices[0].message.content;
+    
+    // Remove all blank lines (lines that are only whitespace)
+    latexContent = latexContent.replace('\\vspace{5pt}', '');
+    // Remove leading spaces (indents) from each line
+    latexContent = latexContent.replace(/^ +/gm, '');
+    // Optionally, trim leading/trailing whitespace
+    latexContent = latexContent.trim();
+
+    fs.writeFileSync('input.tex', latexContent, 'utf8');
+    console.log('LaTeX code saved to input.tex');
+    
     fs.writeFileSync('inputCov.tex', latexContent, 'utf8');
     console.log('LaTeX code saved to inputCov.tex');
 
