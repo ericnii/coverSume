@@ -7,8 +7,6 @@ const multer = require('multer');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { authMiddleware, requiresAuth } = require('./middleware/auth');
-
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -29,41 +27,25 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
 
-// Custom callback redirect BEFORE auth middleware - this must come first!
-app.get('/callback', (req, res) => {
-  // Auth0 calls this after login, then redirect to frontend
-  setTimeout(() => {
-    res.redirect('http://localhost:3000');
-  }, 100);
-});
-
-// Auth0 middleware
-app.use(authMiddleware);
-
 // Fix the static file serving path
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
-// req.isAuthenticated is provided from the auth router
+// Status endpoint
 app.get('/', (req, res) => {
-  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  res.send('Server is running');
 });
 
-// Check auth status endpoint
-app.get('/check-auth', (req, res) => {
-  res.json({ isAuthenticated: req.oidc.isAuthenticated() });
-});
-
-// profile route will return user profile information when logged in
-app.get('/profile', requiresAuth(), (req, res) => {
-  res.send(JSON.stringify(req.oidc.user));
+// Profile endpoint
+app.get('/profile', (req, res) => {
+  res.send(JSON.stringify({ message: 'Profile endpoint' }));
 });
 
 // Fix the static file serving path
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
-app.post('/generate-resume', requiresAuth(), async (req, res) => {
+app.post('/generate-resume', async (req, res) => {
     try {
         console.log('Generating resume...');
         const formData = req.body;
@@ -83,7 +65,7 @@ app.post('/generate-resume', requiresAuth(), async (req, res) => {
     }
 });
 
-app.post('/cover-letter', requiresAuth(), upload.single('resume'), async (req, res) => {
+app.post('/cover-letter', upload.single('resume'), async (req, res) => {
     try {
         console.log('Generating cover letter...');
         const formData = req.body;

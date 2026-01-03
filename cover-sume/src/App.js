@@ -2,6 +2,7 @@ import './App.css';
 import About from './about.js';
 import Resume from  './resume.js'
 import Cover from './cover.js'
+import AuthButtons from './AuthButtons.js';
 import Lottie from 'lottie-react';
 import animation from './front.json';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +14,9 @@ function AppContent() {
   return (
     <div className="bg-slate-50 min-h-screen">
       <div className="relative top-10">
-        <div className="flex flex-row gap-10 w-screen justify-center text-2xl font-thin">
+        <div className="flex flex-row gap-10 w-screen justify-between px-8 items-center text-lg font-thin">
             <button className="relative hover:opacity-50 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-gray-800 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" onClick={() => navigate('/about')}>About Us</button>
+            <AuthButtons />
         </div>
       </div>
           <div className="flex items-center justify-center px-8 mt-12 gap-28">

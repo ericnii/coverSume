@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function CoverLetterGenerator() {
   const [pdfUrl, setPdfUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const { getAccessTokenSilently } = useAuth0();
 
   // Add state for form fields
   const [formData, setFormData] = useState({
@@ -43,8 +45,13 @@ function CoverLetterGenerator() {
       formDataToSend.append('resume', resumeFile);
     }
     try{   
+      const token = await getAccessTokenSilently();
+      console.log('Token obtained:', token.substring(0, 20) + '...');
       const response = await fetch("http://localhost:3001/cover-letter", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
         body: formDataToSend,
       });
 
@@ -58,7 +65,7 @@ function CoverLetterGenerator() {
       setLoading(false);
     } catch (err) {
       console.error('Error generating cover letter:', err);
-      setError(err.message || 'Error, please press Generate Cover Letter again.');
+      setError(err.message || 'Failed to generate cover letter. Please try again.');
       setLoading(false);
     }
   };

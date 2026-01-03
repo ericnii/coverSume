@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const ResumeViewer = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { getAccessTokenSilently } = useAuth0();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -58,10 +60,13 @@ const ResumeViewer = () => {
     console.log('Sending data:', dataToSend);
      
     try {
+      const token = await getAccessTokenSilently();
+      console.log('Token obtained:', token.substring(0, 20) + '...');
       const response = await fetch("https://coversume-backend.onrender.com/generate-resume", {
       method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(dataToSend)
       });
@@ -75,7 +80,7 @@ const ResumeViewer = () => {
       setPdfUrl(`https://coversume-backend.onrender.com${data.url}`);
     } catch (err) {
       console.error('Error generating resume:', err);
-      setError(err.message || 'Error, please press Generate Resume again.');
+      setError(err.message || 'Failed to generate resume. Please try again.');
     }
     setLoading(false);
   }
