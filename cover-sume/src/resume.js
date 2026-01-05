@@ -6,7 +6,7 @@ const ResumeViewer = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, user } = useAuth0();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -54,7 +54,8 @@ const ResumeViewer = () => {
       ...formData,
       education: education,
       experiences: experiences,
-      project: projects
+      project: projects,
+      userId: user?.sub
     };
     
     console.log('Sending data:', dataToSend);

@@ -7,7 +7,7 @@ function CoverLetterGenerator() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, user } = useAuth0();
 
   // Add state for form fields
   const [formData, setFormData] = useState({
@@ -44,6 +44,7 @@ function CoverLetterGenerator() {
     if (resumeFile) {
       formDataToSend.append('resume', resumeFile);
     }
+    formDataToSend.append('userId', user?.sub);
     try{   
       const token = await getAccessTokenSilently();
       console.log('Token obtained:', token.substring(0, 20) + '...');

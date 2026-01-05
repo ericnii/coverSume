@@ -7,18 +7,10 @@ const multer = require('multer');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('Created uploads directory at:', uploadsDir);
-} else {
-  console.log('Uploads directory exists at:', uploadsDir);
-}
-const upload = multer({ dest: uploadsDir });
-
 const { generatePDF } = require('./latex');
 const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
+const { uploadToS3, getUserFiles } = require('./s3-upload');
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://coversume-frontend.onrender.com',
@@ -45,17 +37,32 @@ app.get('/profile', (req, res) => {
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
+// Multer setup for temporary file storage
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+const upload = multer({ dest: uploadsDir });
+
 app.post('/generate-resume', async (req, res) => {
     try {
-        console.log('Generating resume...');
+        const userId = req.body.userId;
+        if (!userId) {
+          return res.status(400).json({ error: 'userId is required' });
+        }
+
+        console.log(`Generating resume for user: ${userId}`);
         const formData = req.body;
-        console.log('Received form data:', formData);
         
         await analyzeImage(formData);
         await generatePDF('resume');
         
-        console.log('Sending response...');
-        res.json({ url: "/resume-pdf" });
+        // Upload to S3
+        const pdfPath = path.join(__dirname, 'output.pdf');
+        const s3Url = await uploadToS3(userId, pdfPath, 'resume');
+        
+        console.log('Resume uploaded to S3');
+        res.json({ url: s3Url });
     } catch (error) {
         console.error('Error generating resume:', error);
         res.status(500).json({ 
@@ -67,17 +74,24 @@ app.post('/generate-resume', async (req, res) => {
 
 app.post('/cover-letter', upload.single('resume'), async (req, res) => {
     try {
-        console.log('Generating cover letter...');
+        const userId = req.body.userId;
+        if (!userId) {
+          return res.status(400).json({ error: 'userId is required' });
+        }
+
+        console.log(`Generating cover letter for user: ${userId}`);
         const formData = req.body;
         const file = req.file;
-        console.log(file);
-        console.log(file.path);
+        
         await generateCov(formData, file.path);
-        console.log(file.path);
         await generatePDF('cover');
         
-        console.log('Sending response...');
-        res.json({ url: "/cover-pdf" });
+        // Upload to S3
+        const pdfPath = path.join(__dirname, 'outputCov.pdf');
+        const s3Url = await uploadToS3(userId, pdfPath, 'cover');
+        
+        console.log('Cover letter uploaded to S3');
+        res.json({ url: s3Url });
     } catch (error) {
         console.error('Error generating cover letter:', error);
         res.status(500).json({ 
@@ -87,32 +101,20 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
     }
 });
 
-app.get('/resume-pdf', (req, res) => {
-    const filePath = path.join(__dirname, 'output.pdf');
-    
-    // Set proper headers for PDF display
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=resume.pdf');
-    
-    res.sendFile(filePath, err => {
-        if (err) {
-            console.error('Error sending file:', err);
-            res.status(404).send('PDF not found');
+// Get user's files from S3
+app.get('/user-files', async (req, res) => {
+    try {
+        const userId = req.query.userId;
+        if (!userId) {
+          return res.status(400).json({ error: 'userId is required' });
         }
-    });
-});
 
-app.get('/cover-pdf', (req, res) => {
-    const filePath = path.join(__dirname, 'outputCov.pdf');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=cover-letter.pdf');
-    
-    res.sendFile(filePath, err => {
-        if (err) {
-            console.error('Error sending cover PDF:', err);
-            res.status(404).send('Cover letter PDF not found');
-        }
-    });
+        const files = await getUserFiles(userId);
+        res.json({ files });
+    } catch (error) {
+        console.error('Error fetching user files:', error);
+        res.status(500).json({ error: 'Failed to fetch files' });
+    }
 });
 
 const PORT = process.env.PORT || 3001;
