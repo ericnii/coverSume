@@ -2,6 +2,7 @@ import './App.css';
 import About from './about.js';
 import Resume from  './resume.js'
 import Cover from './cover.js'
+import Documents from './documents.js'
 import AuthButtons from './AuthButtons.js';
 import Lottie from 'lottie-react';
 import animation from './front.json';
@@ -15,7 +16,10 @@ function AppContent() {
     <div className="bg-slate-50 min-h-screen">
       <div className="relative top-10">
         <div className="flex flex-row gap-10 w-screen justify-between px-8 items-center text-lg font-thin">
-            <button className="relative hover:opacity-50 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-gray-800 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" onClick={() => navigate('/about')}>About Us</button>
+            <div className="flex gap-6">
+              <button className="relative hover:opacity-50 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-gray-800 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" onClick={() => navigate('/about')}>About Us</button>
+              <button className="relative hover:opacity-50 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-gray-800 after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" onClick={() => navigate('/documents')}>Documents</button>
+            </div>
             <AuthButtons />
         </div>
       </div>
@@ -77,6 +81,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/resume" element={<Resume />} />
         <Route path="/cover" element={<Cover/>}/>
+        <Route path="/documents" element={<Documents/>}/>
       </Routes>
     </HashRouter>
   );

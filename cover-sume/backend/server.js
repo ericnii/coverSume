@@ -10,7 +10,7 @@ dotenv.config();
 const { generatePDF } = require('./latex');
 const { analyzeImage } = require('./ai_resume');
 const { generateCov } = require('./ai_cover');
-const { uploadToS3, getUserFiles } = require('./s3-upload');
+const { uploadToS3, getUserFiles, getPresignedUrl } = require('./s3-upload');
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://coversume-frontend.onrender.com',
@@ -114,6 +114,23 @@ app.get('/user-files', async (req, res) => {
     } catch (error) {
         console.error('Error fetching user files:', error);
         res.status(500).json({ error: 'Failed to fetch files' });
+    }
+});
+
+// Get presigned URL for a file
+app.get('/get-presigned-url', async (req, res) => {
+    console.log('Received request for presigned URL with query:', req.query);
+    try {
+        const { s3Key } = req.query;
+        if (!s3Key) {
+          return res.status(400).json({ error: 's3Key is required' });
+        }
+
+        const presignedUrl = await getPresignedUrl(s3Key, 3600); // 1 hour expiration
+        res.json({ url: presignedUrl });
+    } catch (error) {
+        console.error('Error generating presigned URL:', error);
+        res.status(500).json({ error: 'Failed to generate download link' });
     }
 });
 

@@ -32,14 +32,14 @@ async function uploadToS3(userId, filePath, fileType) {
       Key: s3Key,
       Body: fileContent,
       ContentType: 'application/pdf',
-      ACL: 'private' // Only authenticated user can access
+      ACL: 'public-read'
     });
 
     const result = await s3Client.send(command);
-    const presignedUrl = await getPresignedUrl(s3Key);
+    const s3Url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
     
-    console.log(`File uploaded to S3: ${presignedUrl}`);
-    return presignedUrl;
+    console.log(`File uploaded to S3: ${s3Url}`);
+    return s3Url;
   } catch (error) {
     console.error('Error uploading to S3:', error);
     throw error;

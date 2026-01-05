@@ -63,7 +63,7 @@ const ResumeViewer = () => {
     try {
       const token = await getAccessTokenSilently();
       console.log('Token obtained:', token.substring(0, 20) + '...');
-      const response = await fetch("https://coversume-backend.onrender.com/generate-resume", {
+      const response = await fetch("http://localhost:3001/generate-resume", {
       method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ const ResumeViewer = () => {
       }
 
       const data = await response.json();
-      setPdfUrl(`https://coversume-backend.onrender.com${data.url}`);
+      setPdfUrl(data.url);
     } catch (err) {
       console.error('Error generating resume:', err);
       setError(err.message || 'Failed to generate resume. Please try again.');
@@ -163,11 +163,10 @@ const ResumeViewer = () => {
   return (
     <div className="p-3">
       <button
-        type="button"
         onClick={() => navigate('/')}
-        className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md"
+        className="mb-6 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
       >
-        Go Back
+        ← Back Home
       </button>
 
       <h1 className="text-center text-3xl">Resume Generator</h1>
