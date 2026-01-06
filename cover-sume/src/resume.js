@@ -81,7 +81,7 @@ const ResumeViewer = () => {
       setPdfUrl(data.url);
     } catch (err) {
       console.error('Error generating resume:', err);
-      setError(err.message || 'Failed to generate resume. Please try again.');
+      setError('Failed to generate resume. Please try again.');
     }
     setLoading(false);
   }

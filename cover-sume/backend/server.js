@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
 // Multer setup for temporary file storage
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join('/tmp', 'coversume-uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -59,10 +59,9 @@ app.post('/generate-resume', async (req, res) => {
         
         // Upload to S3
         const pdfPath = path.join(__dirname, 'output.pdf');
-        const s3Url = await uploadToS3(userId, pdfPath, 'resume');
-        
-        console.log('Resume uploaded to S3');
-        res.json({ url: s3Url });
+        const s3Key = await uploadToS3(userId, pdfPath, 'resume');
+        const presignedURL = await getPresignedUrl(s3Key)
+        res.json({ url: presignedURL });
     } catch (error) {
         console.error('Error generating resume:', error);
         res.status(500).json({ 
@@ -89,9 +88,10 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
         // Upload to S3
         const pdfPath = path.join(__dirname, 'outputCov.pdf');
         const s3Url = await uploadToS3(userId, pdfPath, 'cover');
+        const presignedURL = await getPresignedUrl(s3Url);
         
         console.log('Cover letter uploaded to S3');
-        res.json({ url: s3Url });
+        res.json({ url: presignedURL });
     } catch (error) {
         console.error('Error generating cover letter:', error);
         res.status(500).json({ 

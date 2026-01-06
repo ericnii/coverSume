@@ -62,11 +62,11 @@ function CoverLetterGenerator() {
       }
 
       const data = await response.json();
-      setPdfUrl(`http://localhost:3001${data.url}`);
+      setPdfUrl(data.url);
       setLoading(false);
     } catch (err) {
       console.error('Error generating cover letter:', err);
-      setError(err.message || 'Failed to generate cover letter. Please try again.');
+      setError('Failed to generate cover letter. Please try again.');
       setLoading(false);
     }
   };

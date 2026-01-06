@@ -12,7 +12,6 @@ services:
       - PORT=3001
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     volumes:
-      - ./backend/uploads:/cover-sume/backend/uploads
       - ./public:/cover-sume/public
     restart: unless-stopped
 

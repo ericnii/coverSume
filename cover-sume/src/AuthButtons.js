@@ -37,7 +37,7 @@ function AuthButtons() {
       {isAuthenticated ? (
         <>
           <span className="text-sm font-thin">
-            Welcome, <span className="font-semibold">{user?.name || user?.email}</span>
+            Logged in, <span className="font-semibold">{user?.name || user?.email}</span>
           </span>
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
