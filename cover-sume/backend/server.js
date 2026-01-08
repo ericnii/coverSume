@@ -14,7 +14,7 @@ const { uploadToS3, getUserFiles, getPresignedUrl } = require('./s3-upload');
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://coversume-frontend.onrender.com',
-           'https://coversume-frontend.onrender.com/#/*', 'https://main.d3pls8p312jhf5.amplifyapp.com/', 'https://main.d3pls8p312jhf5.amplifyapp.com/#/'],
+           'https://coversume-frontend.onrender.com/#/*', 'https://main.d3pls8p312jhf5.amplifyapp.com', 'https://main.d3pls8p312jhf5.amplifyapp.com/#/'],
   methods: ['GET', 'POST', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
