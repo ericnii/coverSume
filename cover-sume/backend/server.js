@@ -28,11 +28,6 @@ app.get('/', (req, res) => {
   res.send('Server is running');
 });
 
-// Profile endpoint
-app.get('/profile', (req, res) => {
-  res.send(JSON.stringify({ message: 'Profile endpoint' }));
-});
-
 // Fix the static file serving path
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
