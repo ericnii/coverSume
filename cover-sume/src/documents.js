@@ -17,7 +17,7 @@ function Documents() {
 
   const handleViewOrDownload = async (key, download = false) => {
     try {
-      const response = await fetch(`http://localhost:3001/get-presigned-url?s3Key=${encodeURIComponent(key)}`);
+      const response = await fetch(`https://coversume-backend.onrender.com/get-presigned-url?s3Key=${encodeURIComponent(key)}`);
       const data = await response.json();
       
       if (download) {
@@ -39,7 +39,7 @@ function Documents() {
   const fetchUserDocuments = async (userId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/user-files?userId=${userId}`);
+      const response = await fetch(`https://coversume-backend.onrender.com/user-files?userId=${userId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch documents');
