@@ -46,8 +46,8 @@ function CoverLetterGenerator() {
     try {
       const token = await getAccessTokenSilently();
       console.log("Token obtained:", token.substring(0, 20) + "...");
-      // const response = await fetch("https://coversume-backend.onrender.com/cover-letter", {
-      const response = await fetch("http://localhost:3001/cover-letter", {
+      const response = await fetch("https://coversume-backend.onrender.com/cover-letter", {
+      //const response = await fetch("http://localhost:3001/cover-letter", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
