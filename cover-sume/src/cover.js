@@ -1,63 +1,65 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import Layout from "./Layout";
+import { PageIntro, Section, Field, TextInput, TextArea } from "./ui";
 
 function CoverLetterGenerator() {
   const [pdfUrl, setPdfUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { getAccessTokenSilently, user } = useAuth0();
 
-  // Add state for form fields
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    phone: '',
-    email: '',
-    linkedin: '',
-    github: '',
-    companyName: '',
-    companyAddress: '',
-    jobPosting: '',
-    hiringManager: '',
+    name: "",
+    location: "",
+    phone: "",
+    email: "",
+    linkedin: "",
+    github: "",
+    companyName: "",
+    companyAddress: "",
+    jobPosting: "",
+    hiringManager: "",
   });
 
-  // Add state for file upload
   const [resumeFile, setResumeFile] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const generateCL = async () => {
     setLoading(true);
-    setError('');
+    setError("");
 
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       formDataToSend.append(key, value);
     });
     if (resumeFile) {
-      formDataToSend.append('resume', resumeFile);
+      formDataToSend.append("resume", resumeFile);
     }
-    formDataToSend.append('userId', user?.sub);
-    try{   
+    formDataToSend.append("userId", user?.sub);
+    try {
       const token = await getAccessTokenSilently();
-      console.log('Token obtained:', token.substring(0, 20) + '...');
-      const response = await fetch("https://coversume-backend.onrender.com/cover-letter", {
+      console.log("Token obtained:", token.substring(0, 20) + "...");
+      // const response = await fetch("https://coversume-backend.onrender.com/cover-letter", {
+      const response = await fetch("http://localhost:3001/cover-letter", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: formDataToSend,
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error', message: `Server error: ${response.status}` }));
+        const errorData = await response.json().catch(() => ({
+          error: "Unknown error",
+          message: `Server error: ${response.status}`,
+        }));
         throw new Error(errorData.message || errorData.error || `Server error: ${response.status}`);
       }
 
@@ -65,188 +67,159 @@ function CoverLetterGenerator() {
       setPdfUrl(data.url);
       setLoading(false);
     } catch (err) {
-      console.error('Error generating cover letter:', err);
-      setError('Failed to generate cover letter. Please try again.');
+      console.error("Error generating cover letter:", err);
+      setError(err.message || "Failed to generate cover letter. Please try again.");
       setLoading(false);
     }
   };
 
   return (
-    <div className='p-3'>
-      <button
-        onClick={() => navigate('/')}
-        className="mb-6 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
-      >
-        ← Back Home
-      </button>
-      <div className='flex flex-col items-center'>
+    <Layout>
+      <div className="mx-auto max-w-5xl px-5 py-12 md:py-16">
+        <PageIntro kicker="Cover letter" title="Write the letter">
+          Your details, the role, and a picture of your resume. The letter is written from those three things.
+        </PageIntro>
+
         <form
-          className="mb-8 p-8"
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
             generateCL();
           }}
         >
-          <h1 className="text-center text-3xl mb-14">Cover Letter Generator</h1>
-          <div className="flex flex-wrap gap-6">
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Full Name</label>
-              <input
-                name="name"
-                placeholder="Enter your name"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Where do you live?</label>
-              <input
-                name="location"
-                placeholder="Enter your city or address"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.location}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Phone Number</label>
-              <input
-                name="phone"
-                placeholder="Enter your phone number"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Email Address</label>
-              <input
-                name="email"
-                placeholder="Enter your email"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex gap-6 w-full">
-              <div className="flex flex-col flex-1">
-                <label className="mb-2 font-bold text-gray-700">LinkedIn (optional)</label>
-                <input
+          <Section index="01" title="You">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Full name">
+                <TextInput
+                  name="name"
+                  placeholder="Jordan Lee"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="Where you live">
+                <TextInput
+                  name="location"
+                  placeholder="Toronto, ON"
+                  required
+                  value={formData.location}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="Phone">
+                <TextInput
+                  name="phone"
+                  placeholder="416-555-0199"
+                  required
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="Email">
+                <TextInput
+                  name="email"
+                  type="email"
+                  placeholder="jordan@email.com"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="LinkedIn" hint="Optional.">
+                <TextInput
                   name="linkedin"
-                  placeholder="Enter your LinkedIn URL"
-                  className="p-3 border-2 border-gray-300 rounded-md"
+                  placeholder="linkedin.com/in/jordanlee"
                   value={formData.linkedin}
                   onChange={handleChange}
                 />
-              </div>
-              <div className="flex flex-col flex-1">
-                <label className="mb-2 font-bold text-gray-700">GitHub (optional)</label>
-                <input
+              </Field>
+              <Field label="GitHub" hint="Optional.">
+                <TextInput
                   name="github"
-                  placeholder="Enter your GitHub URL"
-                  className="p-3 border-2 border-gray-300 rounded-md"
+                  placeholder="github.com/jordanlee"
                   value={formData.github}
                   onChange={handleChange}
                 />
-              </div>
+              </Field>
             </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Company Name</label>
-              <input
-                name="companyName"
-                placeholder="Enter the company name"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.companyName}
-                onChange={handleChange}
-              />
+          </Section>
+
+          <Section index="02" title="The role">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Company">
+                <TextInput
+                  name="companyName"
+                  placeholder="Northwind"
+                  required
+                  value={formData.companyName}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="Company address">
+                <TextInput
+                  name="companyAddress"
+                  placeholder="100 King Street West, Toronto"
+                  required
+                  value={formData.companyAddress}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field label="Hiring manager" hint="Optional. Leave blank if the posting does not name one.">
+                <TextInput
+                  name="hiringManager"
+                  placeholder="Priya Shah"
+                  value={formData.hiringManager}
+                  onChange={handleChange}
+                />
+              </Field>
+              <Field className="sm:col-span-2" label="Job posting">
+                <TextArea
+                  name="jobPosting"
+                  placeholder="Paste the posting here."
+                  required
+                  className="input min-h-[180px]"
+                  value={formData.jobPosting}
+                  onChange={handleChange}
+                />
+              </Field>
             </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Company Address</label>
-              <input
-                name="companyAddress"
-                placeholder="Enter the company address"
-                required
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.companyAddress}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Hiring Manager (optional)</label>
-              <input
-                name="hiringManager"
-                placeholder="Enter the hiring manager's name (optional)"
-                className="p-3 border-2 border-gray-300 rounded-md"
-                value={formData.hiringManager}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Job Posting</label>
-              <textarea
-                name="jobPosting"
-                placeholder="Paste the full job posting/description here..."
-                className="p-3 border-2 border-gray-300 rounded-md min-h-[150px]"
-                required
-                value={formData.jobPosting}
-                onChange={handleChange}
-              />
-            </div>
-            {/* File upload input */}
-            <div className="flex flex-col flex-1 min-w-[300px]">
-              <label className="mb-2 font-bold text-gray-700">Upload Resume (PDF NOT ACCEPTED, please take a screenshot of the resume and attach it here to ensure PNG)</label>
+          </Section>
+
+          <Section index="03" title="Resume">
+            <Field
+              label="Resume image"
+              hint="PNG or JPG. A screenshot of the resume is fine. PDF is not accepted."
+            >
               <input
                 type="file"
                 name="resume"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
                 required
-                onChange={e => setResumeFile(e.target.files[0])}
-                className="p-3 border-2 border-gray-300 rounded-md"
+                onChange={(e) => setResumeFile(e.target.files[0])}
+                className="input"
               />
+            </Field>
+          </Section>
+
+          <div className="border-t border-[#ddd6cb] pt-8">
+            <p className="max-w-xxxl text-sm leading-relaxed text-[#5e574f]">
+              If a run fails, submit again. Each pass is slightly different, so regenerate when a sentence is off.
+            </p>
+            {error && <div className="note mt-4 max-w-xl">{error}</div>}
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              <button type="submit" disabled={loading} className="btn">
+                {loading ? "Generating…" : "Generate cover letter"}
+              </button>
+              {pdfUrl && (
+                <a href={pdfUrl} target="_blank" rel="noreferrer" className="btn btn-line">
+                  Open PDF
+                </a>
+              )}
             </div>
           </div>
-          <div className='mt-5 mb-5 font-semibold text-red-500'>If the generation fails, please simply press Generate Cover Letter again</div>
-          <div className='mt-5 mb-5 font-semibold text-green-500'>Each generation may be slightly different, so if there is a part you don't like, try pressing Generate Cover Letter again</div>
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md border border-red-300">
-              {error}
-            </div>
-          )}
-        <div className="flex gap-6">
-          <button 
-            type="submit"
-            disabled={loading}
-            className={`px-5 py-3 rounded-md transition-colors ${
-              loading 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
-            } text-white mb-10 mt-8`}
-          >
-            {loading ? "Generating..." : "Generate Cover Letter"}
-          </button>
-          {pdfUrl && (
-            <div>
-              <h3 className="mb-2">Generated Cover Letter</h3>
-              <a 
-                href={pdfUrl} 
-                target="_blank" 
-                rel="noreferrer"
-                className="px-5 py-3 bg-green-500 hover:bg-green-600 text-white rounded-md text-base inline-block"
-              >
-                Open PDF in New Tab
-              </a>
-            </div>
-          )}       
-        </div>
         </form>
-       </div>
-    </div>
+      </div>
+    </Layout>
   );
 }
 

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function AuthButtons() {
   const { loginWithRedirect, logout, isAuthenticated, user, isLoading, error } = useAuth0();
   const [loginError, setLoginError] = useState(false);
 
   if (isLoading) {
-    return <span className="text-sm font-thin">Loading...</span>;
+    return <span className="text-sm text-[#6f675e]">Loading</span>;
   }
 
   const handleLogin = async () => {
@@ -20,41 +20,36 @@ function AuthButtons() {
 
   if (error || loginError) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-thin text-red-500">Sign in failed, try again</span>
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-[#8f3d32]">Sign-in failed</span>
+        <button type="button" onClick={handleLogin} className="btn btn-line px-3 py-1 text-sm">
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return (
+      <div className="flex items-center gap-3">
+        <span className="max-w-[180px] truncate text-sm text-[#5e574f]">
+          {user?.name || user?.email}
+        </span>
         <button
-          onClick={handleLogin}
-          className="relative bg-yellow-500 hover:opacity-50 rounded-3xl px-3 py-1 text-white text-xs font-thin"
+          type="button"
+          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+          className="text-sm text-[#5e574f] underline-offset-4 hover:text-[#1b1916] hover:underline"
         >
-          Retry
+          Log out
         </button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-3">
-      {isAuthenticated ? (
-        <>
-          <span className="text-sm font-thin">
-            Logged in, <span className="font-semibold">{user?.name || user?.email}</span>
-          </span>
-          <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="relative bg-red-500 hover:opacity-50 rounded-3xl px-4 py-1.5 text-white text-sm font-thin after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-white after:left-4 after:bottom-1 after:transition-all after:duration-300 hover:after:w-11"
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <button
-          onClick={handleLogin}
-          className="relative bg-blue-500 hover:opacity-50 rounded-3xl px-4 py-1.5 text-white text-sm font-thin after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-white after:left-4 after:bottom-1 after:transition-all after:duration-300 hover:after:w-9"
-        >
-          Login
-        </button>
-      )}
-    </div>
+    <button type="button" onClick={handleLogin} className="btn px-3 py-1.5 text-sm">
+      Log in
+    </button>
   );
 }
 

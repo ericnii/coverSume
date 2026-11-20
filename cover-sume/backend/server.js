@@ -39,6 +39,19 @@ if (!fs.existsSync(uploadsDir)) {
 }
 const upload = multer({ dest: uploadsDir });
 
+function getErrorStatusAndMessage(error, fallbackMessage) {
+    const status = Number(error?.status) || Number(error?.statusCode) || 500;
+
+    // OpenAI SDK errors usually expose a nested payload with extra details.
+    const nestedMessage = error?.error?.message || error?.response?.data?.error?.message;
+    const message = nestedMessage || error?.message || fallbackMessage;
+
+    return {
+        status,
+        message,
+    };
+}
+
 app.post('/generate-resume', async (req, res) => {
     try {
         const userId = req.body.userId;
@@ -59,9 +72,10 @@ app.post('/generate-resume', async (req, res) => {
         res.json({ url: presignedURL });
     } catch (error) {
         console.error('Error generating resume:', error);
-        res.status(500).json({ 
+        const { status, message } = getErrorStatusAndMessage(error, 'Failed to generate resume');
+        res.status(status).json({ 
             error: 'Failed to generate resume', 
-            message: error.message 
+            message
         });
     }
 });
@@ -89,9 +103,10 @@ app.post('/cover-letter', upload.single('resume'), async (req, res) => {
         res.json({ url: presignedURL });
     } catch (error) {
         console.error('Error generating cover letter:', error);
-        res.status(500).json({ 
+        const { status, message } = getErrorStatusAndMessage(error, 'Failed to generate cover letter');
+        res.status(status).json({ 
             error: 'Failed to generate cover letter', 
-            message: error.message 
+            message
         });
     }
 });
